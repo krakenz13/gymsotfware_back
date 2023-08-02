@@ -10,6 +10,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/jetstream": "^3.2",
+        "laravel/passport": "^11.8",
         "laravel/sanctum": "*",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",

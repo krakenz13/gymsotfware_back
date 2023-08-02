@@ -53,7 +53,7 @@ Route::delete('estudiantes/{estudiante}/mentorias/{mentoria}', [EliminarEstudian
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-Route::group(['middleware'=>['auth:sanctum']], function(){
+Route::group(['middleware'=>['auth:passaport']], function(){
     Route::get('user-profile', [AuthController::class,'userProfile']);
     Route::post('logout', [AuthController::class,'logout']);
 });
