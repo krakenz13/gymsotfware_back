@@ -17,9 +17,11 @@ use App\Http\Controllers\EstudiantesMentorias\EliminarEstudianteMentoriaControll
 use App\Http\Controllers\Mentorias\ConsultaListadoMentoriasController;
 
 // API
-use App\Http\Controllers\Api\AuthController;
-
+// use App\Http\Controllers\Api\AuthController;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -32,30 +34,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Estudiantes
-Route::get('estudiantes/search', [ConsultaListadoEstudiantesController::class, 'index']);
-Route::get('estudiantes/search/{search}', [ConsultaListadoEstudiantesController::class, 'index']);
-Route::get('estudiantes/{id}', [ConsultaEstudianteController::class, 'show']);
-Route::post('estudiantes', [CrearEstudianteController::class, 'store']);
-Route::put('estudiantes/{id}', [ActualizarEstudianteController::class, 'update']);
-Route::delete('estudiantes/{id}', [EliminarEstudianteController::class, 'destroy']);
+Route::group(['middleware' => ['cors']], function () {
 
-//Mentorias
-Route::get('mentorias', [ConsultaListadoMentoriasController::class, 'index']);
+    Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 
-//Estudiantes Mentorias
-Route::get('estudiantes/{estudiante}/mentorias/{mentoria}', [ConsultaEstudianteMentoriaController::class, 'show']);
-Route::get('estudiantes/{estudiante}/listado/mentorias', [ConsultaListadoEstudianteMentoriasController::class, 'index']);
-Route::post('estudiantes/{estudiante}/mentorias', [CrearEstudianteMentoriaController::class, 'store']);
-Route::delete('estudiantes/{estudiante}/mentorias/{mentoria}', [EliminarEstudianteMentoriaController::class, 'destroy']);
+    Route::group(['middleware' => 'auth:api'], function(){
+        //Estudiantes
+        Route::get('estudiantes/search', [ConsultaListadoEstudiantesController::class, 'index']);
+        Route::get('estudiantes/search/{search}', [ConsultaListadoEstudiantesController::class, 'index']);
+        Route::get('estudiantes/{id}', [ConsultaEstudianteController::class, 'show']);
+        Route::post('estudiantes', [CrearEstudianteController::class, 'store']);
+        Route::put('estudiantes/{id}', [ActualizarEstudianteController::class, 'update']);
+        Route::delete('estudiantes/{id}', [EliminarEstudianteController::class, 'destroy']);
 
-//Gestiòn de usuarios
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+        //Mentorias
+        Route::get('mentorias', [ConsultaListadoMentoriasController::class, 'index']);
 
-Route::group(['middleware'=>['auth:passaport']], function(){
-    Route::get('user-profile', [AuthController::class,'userProfile']);
-    Route::post('logout', [AuthController::class,'logout']);
+        //Estudiantes Mentorias
+        Route::get('estudiantes/{estudiante}/mentorias/{mentoria}', [ConsultaEstudianteMentoriaController::class, 'show']);
+        Route::get('estudiantes/{estudiante}/listado/mentorias', [ConsultaListadoEstudianteMentoriasController::class, 'index']);
+        Route::post('estudiantes/{estudiante}/mentorias', [CrearEstudianteMentoriaController::class, 'store']);
+        Route::delete('estudiantes/{estudiante}/mentorias/{mentoria}', [EliminarEstudianteMentoriaController::class, 'destroy']);
+
+    });
+
 });
-
-Route::get('users', [AuthController::class,'allUsers']);
